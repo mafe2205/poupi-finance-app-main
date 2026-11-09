@@ -1,56 +1,97 @@
-# Welcome to your Expo app 👋
+# Poupi — App de Finanças
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile de finanças pessoais feito com [Expo](https://expo.dev) (SDK 58), React Native e [Expo Router](https://docs.expo.dev/router/introduction) (rotas baseadas em arquivos).
 
-## Get started
+Funcionalidades: contas, cartões e faturas, transações, categorias, entradas fixas, metas, relatórios, insights, leitura de comprovantes (câmera/galeria) e notificações.
 
-1. Install dependencies
+## Pré-requisitos
 
-   ```bash
-   npm install
-   ```
+- [Node.js](https://nodejs.org/) LTS (o projeto foi configurado com Node 22) e npm
+- A **API do Poupi (backend)** rodando — o app não funciona sem ela (login, contas, transações etc. vêm da API)
+- Para testar no celular: o app [Expo Go](https://expo.dev/go) compatível com o SDK 58, ou um [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- Opcional: Android Studio (emulador Android) ou Xcode (simulador iOS, só no macOS)
 
-2. Start the app
+## Como rodar
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Instalar as dependências
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Configurar o endereço da API
 
-### Other setup steps
+Por padrão o app chama a API em `http://localhost:5027`. Para usar outro endereço, crie um arquivo `.env` na raiz do projeto:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```env
+EXPO_PUBLIC_API_URL=http://localhost:5027
+```
 
-## Learn more
+Qual endereço usar depende de onde o app vai rodar:
 
-To learn more about developing your project with Expo, look at the following resources:
+| Onde o app roda          | Valor de `EXPO_PUBLIC_API_URL`                       |
+| ------------------------ | ---------------------------------------------------- |
+| Navegador (web)          | `http://localhost:5027`                              |
+| Simulador iOS            | `http://localhost:5027`                              |
+| Emulador Android         | `http://10.0.2.2:5027`                               |
+| Celular físico (Expo Go) | `http://<IP-do-seu-computador>:5027` (ex.: `http://192.168.0.10:5027`) |
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+> No celular físico, o computador e o celular precisam estar na mesma rede Wi-Fi, e a API precisa aceitar conexões externas (não só `localhost`).
+> Sempre que alterar o `.env`, pare o servidor e rode `npx expo start --clear`.
 
-## Join the community
+### 3. Iniciar o app
 
-Join our community of developers creating universal apps.
+```bash
+npm start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+No terminal aparece um QR Code e um menu. Você pode:
+
+- escanear o QR Code com o **Expo Go** (Android) ou com a câmera (iOS)
+- apertar `a` para abrir no emulador Android
+- apertar `i` para abrir no simulador iOS
+- apertar `w` para abrir no navegador
+
+Atalhos equivalentes:
+
+```bash
+npm run android   # abre no emulador Android
+npm run ios       # abre no simulador iOS
+npm run web       # abre no navegador
+```
+
+## Scripts
+
+| Comando                 | O que faz                                                    |
+| ----------------------- | ------------------------------------------------------------ |
+| `npm start`             | Inicia o servidor de desenvolvimento do Expo                 |
+| `npm run android`       | Inicia e abre no Android                                     |
+| `npm run ios`           | Inicia e abre no iOS                                         |
+| `npm run web`           | Inicia e abre no navegador                                   |
+| `npm run lint`          | Roda o ESLint                                                |
+| `npm run reset-project` | ⚠️ **Não use.** Move todo o código de `src/` para `example/` e deixa o app em branco (script do template do Expo) |
+
+## Estrutura do projeto
+
+```
+src/
+  app/          telas e rotas (Expo Router) — ex.: app/(tabs)/index.tsx é a tela inicial
+  api/          chamadas à API (client.ts define a URL base)
+  components/   componentes reutilizáveis (UI e gráficos)
+  context/      contextos React (finanças, tema)
+  hooks/        hooks
+  utils/        funções auxiliares (datas, máscaras, dinheiro, notificações)
+  data/         tipos e dados de exemplo
+assets/         ícones, splash e imagens
+```
+
+## Observações
+
+- **Dados de exemplo:** os relatórios usam dados simulados (`USE_MOCK_REPORTS = true` em `src/api/reports.ts`) e a tela inicial tem uma "Fatura de exemplo (mock)". Para usar dados reais da API nos relatórios, troque para `false`.
+- **Notificações push** não funcionam no navegador nem em simulador/emulador — só em aparelho físico. No Android, push não funciona no Expo Go; é preciso um [development build](https://docs.expo.dev/develop/development-builds/introduction/).
+- As pastas `ios/` e `android/` são geradas automaticamente (estão no `.gitignore`) e não precisam ser versionadas.
+
+## Saiba mais
+
+- [Documentação do Expo](https://docs.expo.dev/)
+- [Expo Router](https://docs.expo.dev/router/introduction)
